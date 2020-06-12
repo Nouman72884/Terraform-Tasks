@@ -1,12 +1,9 @@
-
 resource "aws_security_group" "alb" {
-  count = local.chunks_length
+  count = local.chunks_length <= 5 ? local.chunks_length : 5
   name_prefix = "alb.${terraform.workspace}.${var.environment}"
   description = "allow http and https for alb"
   vpc_id      = "vpc-a0eeacda"
   dynamic "ingress" {
-    #count = var.add_https_rules == "true" ? 1 : 0
-    #for_each = local.chunks[count.index]
     for_each = var.add_https_rules == "true" ? local.chunks[count.index] : []
     content {
       from_port = 443
